@@ -28,15 +28,15 @@ resources:
       Properties:
         TableName: employeeTable
         AttributeDefinitions:
-          - AttributeName: empID
+          - AttributeName: email
             AttributeType: S
-          - AttributeName: someOtherAttribute
-            AttributeType: S
+          # - AttributeName: someOtherAttribute
+          #   AttributeType: S
         KeySchema:
-          - AttributeName: empID
+          - AttributeName: email
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
