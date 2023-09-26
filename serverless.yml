@@ -15,7 +15,7 @@ functions:
           path: register
           cors: true
   signInEmployee:
-    handler: employee.signIn
+    handler: employee.signInEmployee
     events:
       - http:
           method: post
