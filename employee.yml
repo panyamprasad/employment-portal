@@ -1,0 +1,40 @@
+service: employment-portal-api
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  environment:
+    EMPLOYEE_TABLE: ${self:service}-EmployeeTable
+
+functions:
+  registerEmployee:
+    handler: employee.register
+    events:
+      - http:
+          method: post
+          path: register
+          cors: true
+  signInEmployee:
+    handler: employee.signIn
+    events:
+      - http:
+          method: post
+          path: signIn
+          cors: true
+resources:
+  Resources:
+    EmployeeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: employeeTable
+        AttributeDefinitions:
+          # - AttributeName: empID
+          #   AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: empID
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
