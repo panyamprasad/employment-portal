@@ -30,7 +30,7 @@ resources:
         AttributeDefinitions:
           - AttributeName: empID
             AttributeType: S
-          - AttributeName: email
+          - AttributeName: someOtherAttribute
             AttributeType: S
         KeySchema:
           - AttributeName: empID
