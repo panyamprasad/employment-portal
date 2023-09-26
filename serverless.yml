@@ -28,8 +28,8 @@ resources:
       Properties:
         TableName: employeeTable
         AttributeDefinitions:
-          # - AttributeName: empID
-          #   AttributeType: S
+          - AttributeName: empID
+            AttributeType: S
           - AttributeName: email
             AttributeType: S
         KeySchema:
