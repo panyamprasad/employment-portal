@@ -26,5 +26,46 @@ module.exports.employeeExperience = async function(event){
     }
     return response;
 
+    async function getEmployeeExperienceInfo(){
+        const params = {
+            TableName: dynamodbTableName
+        }
+        const allEmployeeExpInfo = await scanDynamoRecords(params, []);
+        const body = {
+            data : allEmployeeExpInfo
+        }
+        return buildResponse(200, body)
+    }
+
+    async function getAllEmployeesExperienceInfo(employeeId){
+        const params = {
+            TableName: dynamodbTableName,
+            Key: {
+                'employeeId': employeeId
+            }
+        }
+        return await dynamodb.get(params).promise().then((response) => {
+            return buildResponse(200, response.item);
+        }, (error) => {
+            console.log('Get Experience error:', error);
+        });
+    }
+
+    async function saveExperienceInfo(requestBody){
+        const params = {
+            TableName: dynamodbTableName,
+            item: requestBody
+        }
+        return await dynamodb.put(params).promise().then(() =>{
+            const body = {
+                Operation: 'SAVE',
+                Message: 'Success',
+                Data: requestBody
+            }
+            return buildResponse(200, body);
+        }, (error)=>{
+            console.log('Something went wrong:', error)
+        })
+    }
 
 }
