@@ -53,15 +53,26 @@ module.exports.employeeExperience = async function (event) {
     try{
         const requestBody = JSON.parse(event.body);
 
-        if (!requestBody) {
+        // Validate StartDate and EndDate
+        if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
             return {
-                statusCode: 400,
-                body: JSON.stringify({ message: 'Invalid Data' }),
+            statusCode: 400,
+            body: JSON.stringify({ error: 'EndDate must be after StartDate' }),
             };
         }
         const params = {
             TableName: process.env.EMPLOYEE_TABLE,
-            Item: requestBody,
+            Item: {
+                EmpId: requestBody.EmpId,
+                CompanyName: requestBody.CompanyName,
+                CompanyLocation: requestBody.CompanyLocation,
+                StartDate: requestBody.StartDate,
+                EndDate: requestBody.EndDate,
+                PerformedRole: requestBody.PerformedRole,
+                Responsibilities: requestBody.Responsibilities,
+                TechnologiesWorked: requestBody.TechnologiesWorked,
+                IsActive: requestBody.IsActive,
+            },
           };
         await dynamoDb.put(params).promise();
         return{
