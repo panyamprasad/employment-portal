@@ -13,7 +13,7 @@ module.exports.employeeExperience = async function(event){
             response = await getEmployeeExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
-        case event.httpMethod === 'POST':
+        case event.httpMethod === 'POST' && event.path === 'saveExperienceInfo' :
             response = await saveExperienceInfo();
             console.log(response);
             break;
