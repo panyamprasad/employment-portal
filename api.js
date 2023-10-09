@@ -1,11 +1,15 @@
 const { DynamoDB } = require('aws-sdk');
 const dynamoDb = new DynamoDB.DocumentClient();
 
+const getAllEmployeesExperienceInfoPath = 'getAllEmployeesExperienceInfo'
+const saveExperienceInfoPath = 'saveExperienceInfo'
+
 module.exports.employeeExperience = async function(event){
     console.log('Request Event:', event);
+
     let response;
     switch(true){
-        case event.httpMethod === 'GET':
+        case event.httpMethod === 'GET' && event.path === getAllEmployeesExperienceInfoPath:
             response = await getAllEmployeesExperienceInfo();
             console.log(response);
             break;
@@ -13,7 +17,7 @@ module.exports.employeeExperience = async function(event){
             response = await getEmployeeExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
-        case event.httpMethod === 'POST' && event.path === 'saveExperienceInfo':
+        case event.httpMethod === 'POST' && event.path === saveExperienceInfoPath:
             response = await saveExperienceInfo();
             console.log(response);
             break;
