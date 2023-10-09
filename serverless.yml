@@ -2,38 +2,48 @@ service: employment-portal-api
 provider:
   name: aws
   runtime: nodejs18.x
+  stage: dev
   region: us-east-1
   environment:
-    EMPLOYEE_TABLE: ${self:service}-EmployeeTable
-
+    EMPLOYEE_TABLE: ${self:custom.employeeTable}
+custom:
+  employeeTable: experienceInfo-${self:provider.stage}
+plugins:
+  - serverless-iam-roles-per-function
 functions:
-  registerEmployee:
-    handler: employee.register
+  employeePortal:
+    handler: api.employeePortal
+    name: create-api
+    memorySize: 128
+    timeout: 5
     events:
       - http:
-          method: post
-          path: register
+          method: POST
+          path: saveExperienceInfo
           cors: true
-  signInEmployee:
-    handler: employee.signInEmployee
-    events:
       - http:
-          method: post
-          path: signIn
+          method: PUT
+          path: updateExperienceInfo
+          cors: true
+      - http:
+          method: GET
+          path: getEmployeeExperienceInfo/{employeeId}
+          cors: true
+      - http:
+          method: GET
+          path: getAllEmployeesExperienceInfo
           cors: true
 resources:
   Resources:
     EmployeeTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: employeeTable
+        TableName: ${self:custom.employeeTable}
         AttributeDefinitions:
-          - AttributeName: email
+          - AttributeName: EmpId
             AttributeType: S
-          # - AttributeName: someOtherAttribute
-          #   AttributeType: S
         KeySchema:
-          - AttributeName: email
+          - AttributeName: EmpId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
