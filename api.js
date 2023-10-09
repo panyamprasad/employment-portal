@@ -80,9 +80,9 @@ module.exports.employeeExperience = async function (event) {
     async function updateExperience(event){
         try{
             const requestBody = JSON.parse(event.body);
-            const updateExpression = 'SET experience = :experience';
+            const updateExpression = 'SET data = :data';
             const experienceAttributeValues = {
-                ':experience' : requestBody.experience
+                ':data' : requestBody
             };
             const params = {
               TableName: process.env.EMPLOYEE_TABLE,
@@ -93,7 +93,7 @@ module.exports.employeeExperience = async function (event) {
               experienceAttributeValues: experienceAttributeValues,
               ReturnValues: 'UPDATED_NEW'
             };
-            const result = await dynamoDB.update(params).promise();
+            const result = await dynamoDb.update(params).promise();
             return {
               statusCode: 200,
               body: JSON.stringify({
