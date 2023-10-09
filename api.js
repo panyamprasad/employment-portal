@@ -1,12 +1,7 @@
 const { DynamoDB } = require("aws-sdk");
 const dynamoDb = new DynamoDB.DocumentClient();
 
-const getAllEmployeesExperienceInfoPath = "getAllEmployeesExperienceInfo";
-const saveExperienceInfoPath = "saveExperienceInfo";
-
 module.exports.employeeExperience = async function (event) {
-  console.log("Request Event:", event);
-
   // let response;
   // switch(true){
   //     case event.httpMethod === 'GET' && event.path === getAllEmployeesExperienceInfoPath:
@@ -50,109 +45,89 @@ module.exports.employeeExperience = async function (event) {
 
   //Save Record
   async function saveExperienceInfo(event) {
-    try{
-        const requestBody = JSON.parse(event.body);
+    try {
+      const requestBody = JSON.parse(event.body);
 
-        // Validate StartDate and EndDate
-        if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
-            return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'EndDate must be after StartDate' }),
-            };
-        }
-        const params = {
-            TableName: process.env.EMPLOYEE_TABLE,
-            Item: requestBody
-          };
-        await dynamoDb.put(params).promise();
-        return{
-            statusCode: 200,
-            body: JSON.stringify({
-                message: 'Experience info added successfully...!'
-            })
-        } 
-    }catch(error){
-        return{
-            statusCode: 500,
-            body: JSON.stringify({
-                message: 'Internal Server Error...!'
-            })
-        }
+      // Validate StartDate and EndDate
+      if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "EndDate must be after StartDate" }),
+        };
+      }
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Item: requestBody,
+      };
+      await dynamoDb.put(params).promise();
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          message: "Experience info added successfully...!",
+        }),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Internal Server Error...!",
+        }),
+      };
     }
   }
 
   //Get Record
   async function getEmployeeExperience(event) {
-    const params = {
-      TableName: process.env.EMPLOYEE_TABLE,
-      Key:{
-        EmpId: event.pathParameters.employeeId
-      }
-    };
-    const allEmployeeExpInfo = await dynamoDb.get(params).promise();
-    const body = {
-      data: allEmployeeExpInfo,
-    };
-    return buildResponse(200, body);
-  }
-  //Get All Records
-  async function getAllEmployeesExperience(event){
-    try{
-        const params = {
-            TableName: process.env.EMPLOYEE_TABLE
-        };
-        const result = await dynamoDb.scan(params).promise();
-        if(!result.Items || result.Items.length === 0){
-            return {
-                statusCode: 404,
-                body: JSON.stringify({ message: 'No records found...!' }),
-            };
-        }
+    try {
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+        Key: {
+          EmpId: event.pathParameters.employeeId,
+        },
+      };
+      const result = await dynamoDb.get(params).promise();
+      if (!result.Item) {
         return {
-            statusCode: 200,
-            body: JSON.stringify(result.Items),
-          };
+          statusCode: 400,
+          body: JSON.stringify({ message: "Record not found...!" }),
+        };
+      }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result.Item),
+      };
     } catch (error) {
-        console.error('Error fetching all employees experience:', error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "Internal server error...!",
+        }),
+      };
+    }
+  }
+  //Get All Records
+  async function getAllEmployeesExperience(event) {
+    try {
+      const params = {
+        TableName: process.env.EMPLOYEE_TABLE,
+      };
+      const result = await dynamoDb.scan(params).promise();
+      if (!result.Items || result.Items.length === 0) {
         return {
-          statusCode: 500,
-          body: JSON.stringify({ message: 'Internal server error' }),
+          statusCode: 404,
+          body: JSON.stringify({ message: "No records found...!" }),
         };
       }
+      return {
+        statusCode: 200,
+        body: JSON.stringify(result.Items),
+      };
+    } catch (error) {
+      console.error("Error fetching all employees experience:", error);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ message: "Internal server error" }),
+      };
+    }
   }
-
-  //Get Record
-//   async function getEmployeeExperienceInfo() {
-//     const params = {
-//       TableName: process.env.EMPLOYEE_TABLE,
-//     };
-//     const allEmployeeExpInfo = await scanDynamoRecords(params, []);
-//     const body = {
-//       data: allEmployeeExpInfo,
-//     };
-//     return buildResponse(200, body);
-//   }
-
-  //Get All Records
-//   async function getAllEmployeesExperienceInfo(employeeId) {
-//     const params = {
-//       TableName: process.env.EMPLOYEE_TABLE,
-//       Key: {
-//         employeeId: employeeId,
-//       },
-//     };
-//     return await dynamoDb
-//       .get(params)
-//       .promise()
-//       .then(
-//         (response) => {
-//           return buildResponse(200, response.Item);
-//         },
-//         (error) => {
-//           console.log("Get Experience error:", error);
-//         }
-//       );
-//   }
-
-  
 };
