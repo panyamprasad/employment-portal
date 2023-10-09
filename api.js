@@ -52,6 +52,7 @@ module.exports.employeeExperience = async function(event){
     }
 
     async function saveExperienceInfo(requestBody){
+        logger.info("hello")
         const params = {
             TableName: process.env.EMPLOYEE_TABLE,
             item: requestBody
