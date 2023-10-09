@@ -28,7 +28,7 @@ module.exports.employeeExperience = async function(event){
 
     async function getEmployeeExperienceInfo(){
         const params = {
-            TableName: dynamodbTableName
+            TableName: process.env.DYNAMODB_TABLE_NAME
         }
         const allEmployeeExpInfo = await scanDynamoRecords(params, []);
         const body = {
@@ -39,7 +39,7 @@ module.exports.employeeExperience = async function(event){
 
     async function getAllEmployeesExperienceInfo(employeeId){
         const params = {
-            TableName: dynamodbTableName,
+            TableName: process.env.DYNAMODB_TABLE_NAME,
             Key: {
                 'employeeId': employeeId
             }
@@ -53,7 +53,7 @@ module.exports.employeeExperience = async function(event){
 
     async function saveExperienceInfo(requestBody){
         const params = {
-            TableName: dynamodbTableName,
+            TableName: process.env.DYNAMODB_TABLE_NAME,
             item: requestBody
         }
         return await dynamodb.put(params).promise().then(() =>{
