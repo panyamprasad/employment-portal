@@ -80,12 +80,16 @@ module.exports.employeeExperience = async function (event) {
         }
     }
   }
+
   //Get Record
   async function getEmployeeExperience(event) {
     const params = {
       TableName: process.env.EMPLOYEE_TABLE,
+      Key:{
+        EmpId: event.pathParameters.employeeId
+      }
     };
-    const allEmployeeExpInfo = await scanDynamoRecords(params, []);
+    const allEmployeeExpInfo = await dynamoDb.get(params).promise();
     const body = {
       data: allEmployeeExpInfo,
     };
@@ -130,25 +134,25 @@ module.exports.employeeExperience = async function (event) {
 //   }
 
   //Get All Records
-  async function getAllEmployeesExperienceInfo(employeeId) {
-    const params = {
-      TableName: process.env.EMPLOYEE_TABLE,
-      Key: {
-        employeeId: employeeId,
-      },
-    };
-    return await dynamoDb
-      .get(params)
-      .promise()
-      .then(
-        (response) => {
-          return buildResponse(200, response.Item);
-        },
-        (error) => {
-          console.log("Get Experience error:", error);
-        }
-      );
-  }
+//   async function getAllEmployeesExperienceInfo(employeeId) {
+//     const params = {
+//       TableName: process.env.EMPLOYEE_TABLE,
+//       Key: {
+//         employeeId: employeeId,
+//       },
+//     };
+//     return await dynamoDb
+//       .get(params)
+//       .promise()
+//       .then(
+//         (response) => {
+//           return buildResponse(200, response.Item);
+//         },
+//         (error) => {
+//           console.log("Get Experience error:", error);
+//         }
+//       );
+//   }
 
   
 };
