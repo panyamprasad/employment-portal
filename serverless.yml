@@ -23,7 +23,7 @@ functions:
           cors: true
       - http:
           method: PUT
-          path: updateExperienceInfo
+          path: updateExperienceInfo/{employeeId}
           cors: true
       - http:
           method: GET
