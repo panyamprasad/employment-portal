@@ -44,7 +44,7 @@ module.exports.employeeExperience = async function(event){
                 'employeeId': employeeId
             }
         }
-        return await dynamodb.get(params).promise().then((response) => {
+        return await dynamoDb.get(params).promise().then((response) => {
             return buildResponse(200, response.item);
         }, (error) => {
             console.log('Get Experience error:', error);
@@ -56,7 +56,7 @@ module.exports.employeeExperience = async function(event){
             TableName: process.env.DYNAMODB_TABLE_NAME,
             item: requestBody
         }
-        return await dynamodb.put(params).promise().then(() =>{
+        return await dynamoDb.put(params).promise().then(() =>{
             const body = {
                 Operation: 'SAVE',
                 Message: 'Success',
