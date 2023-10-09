@@ -80,9 +80,8 @@ module.exports.employeeExperience = async function (event) {
         }
     }
   }
-
   //Get Record
-  async function getEmployeeExperienceInfo() {
+  async function getEmployeeExperience(event) {
     const params = {
       TableName: process.env.EMPLOYEE_TABLE,
     };
@@ -92,6 +91,43 @@ module.exports.employeeExperience = async function (event) {
     };
     return buildResponse(200, body);
   }
+  //Get All Records
+  async function getAllEmployeesExperience(event){
+    try{
+        const params = {
+            TableName: process.env.EMPLOYEE_TABLE
+        };
+        const result = await dynamoDb.scan(params).promise();
+        if(!result.Items || result.Items.length === 0){
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ message: 'No records found...!' }),
+            };
+        }
+        return {
+            statusCode: 200,
+            body: JSON.stringify(result.Items),
+          };
+    } catch (error) {
+        console.error('Error fetching all employees experience:', error);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Internal server error' }),
+        };
+      }
+  }
+
+  //Get Record
+//   async function getEmployeeExperienceInfo() {
+//     const params = {
+//       TableName: process.env.EMPLOYEE_TABLE,
+//     };
+//     const allEmployeeExpInfo = await scanDynamoRecords(params, []);
+//     const body = {
+//       data: allEmployeeExpInfo,
+//     };
+//     return buildResponse(200, body);
+//   }
 
   //Get All Records
   async function getAllEmployeesExperienceInfo(employeeId) {
