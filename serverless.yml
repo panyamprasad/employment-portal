@@ -20,7 +20,7 @@ functions:
       - http:
           method: POST
           path: saveExperienceInfo
-          cors: true
+          cors: trueonst
       - http:
           method: PUT
           path: updateExperienceInfo/{employeeId}
