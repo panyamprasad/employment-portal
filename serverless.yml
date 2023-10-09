@@ -12,7 +12,7 @@ plugins:
   - serverless-iam-roles-per-function
 functions:
   employeePortal:
-    handler: api.employeePortal
+    handler: api.employeeExperience
     name: create-api
     memorySize: 128
     timeout: 5
@@ -30,7 +30,7 @@ functions:
           path: getEmployeeExperienceInfo/{employeeId}
           cors: true
       - http:
-          method: GET
+          method: GETALL
           path: getAllEmployeesExperienceInfo
           cors: true
 resources:
