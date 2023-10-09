@@ -62,17 +62,7 @@ module.exports.employeeExperience = async function (event) {
         }
         const params = {
             TableName: process.env.EMPLOYEE_TABLE,
-            Item: {
-                EmpId: requestBody.EmpId,
-                CompanyName: requestBody.CompanyName,
-                CompanyLocation: requestBody.CompanyLocation,
-                StartDate: requestBody.StartDate,
-                EndDate: requestBody.EndDate,
-                PerformedRole: requestBody.PerformedRole,
-                Responsibilities: requestBody.Responsibilities,
-                TechnologiesWorked: requestBody.TechnologiesWorked,
-                IsActive: requestBody.IsActive,
-            },
+            Item: requestBody
           };
         await dynamoDb.put(params).promise();
         return{
