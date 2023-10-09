@@ -13,7 +13,7 @@ module.exports.employeeExperience = async function(event){
             response = await getEmployeeExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
-        case event.httpMethod === 'POST':
+        case event.httpMethod === 'POST' && event.path === 'saveExperienceInfo':
             response = await saveExperienceInfo();
             console.log(response);
             break;
@@ -22,7 +22,7 @@ module.exports.employeeExperience = async function(event){
             console.log(response);
             break;
         default:
-            return
+            return response
     }
     return response;
 
@@ -45,7 +45,7 @@ module.exports.employeeExperience = async function(event){
             }
         }
         return await dynamoDb.get(params).promise().then((response) => {
-            return buildResponse(200, response.item);
+            return buildResponse(200, response.Item);
         }, (error) => {
             console.log('Get Experience error:', error);
         });
