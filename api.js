@@ -13,7 +13,7 @@ module.exports.employeeExperience = async function(event){
             response = await getEmployeeExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
-        case event.httpMethod === 'POST' && event.path === 'saveExperienceInfo' :
+        case event.httpMethod === 'POST':
             response = await saveExperienceInfo();
             console.log(response);
             break;
@@ -22,7 +22,7 @@ module.exports.employeeExperience = async function(event){
             console.log(response);
             break;
         default:
-            response = buildResponse(404, '404 Not Found'); 
+            return
     }
     return response;
 
