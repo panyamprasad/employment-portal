@@ -30,7 +30,7 @@ functions:
           path: getEmployeeExperienceInfo/{employeeId}
           cors: true
       - http:
-          method: GETALL
+          method: GET
           path: getAllEmployeesExperienceInfo
           cors: true
 resources:

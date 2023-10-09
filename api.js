@@ -5,12 +5,12 @@ module.exports.employeeExperience = async function(event){
     console.log('Request Event:', event);
     let response;
     switch(true){
-        case event.httpMethod === 'GETALL':
+        case event.httpMethod === 'GET':
             response = await getAllEmployeesExperienceInfo();
             console.log(response);
             break;
         case event.httpMethod === 'GET':
-            response = await getEmployeeExperienceInfo();
+            response = await getEmployeeExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
         case event.httpMethod === 'POST':
@@ -18,7 +18,7 @@ module.exports.employeeExperience = async function(event){
             console.log(response);
             break;
         case event.httpMethod === 'PUT':
-            response = await updateExperienceInfo();
+            response = await updateExperienceInfo(event.queryStringParameters.employeeId);
             console.log(response);
             break;
         default:
