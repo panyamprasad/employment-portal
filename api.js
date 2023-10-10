@@ -221,6 +221,7 @@ module.exports.employeeExperience = async function (event) {
     async function softDeleteEmployeeExperience(event){
       try{
         const employeeId = event.pathParameters.employeeId;
+        const requestBody = JSON.parse(event.body);
         const params = {
           TableName: process.env.EMPLOYEE_TABLE,
           Key: {
@@ -228,7 +229,7 @@ module.exports.employeeExperience = async function (event) {
           },
           UpdateExpression: 'SET IsActive = : isActive',
           ExpressionAttributeValues:{
-            'isActive': true,
+            'isActive': requestBody.IsActive,
           },
         };
         await dynamoDb.update(params).promise();
