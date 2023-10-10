@@ -38,7 +38,7 @@ functions:
           path: deleteEmployeeExperienceInfo/{employeeId}
           cors: true
       - http:
-          method: PUT
+          method: DELETE
           path: softDeleteExperienceInfo/{employeeId}
 resources:
   Resources:

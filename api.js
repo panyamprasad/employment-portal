@@ -38,7 +38,12 @@ module.exports.employeeExperience = async function (event) {
         }
       case "DELETE":
         if (event.pathParameters && event.pathParameters.employeeId){
-          return deleteEmployeeExperience(event)
+          if(event.queryParameters && event.queryParameters.hardDelete){
+            return hardDeleteEmployeeExperience(event)
+          }else{
+            return softDeleteEmployeeExperience(event)
+          }
+          
         }else{
           return{
             statusCode: 400,
@@ -185,7 +190,7 @@ module.exports.employeeExperience = async function (event) {
     }
 
   //Delete Record
-    async function deleteEmployeeExperience(event){
+    async function hardDeleteEmployeeExperience(event){
       console.log(event)
       try{
         const employeeId = event.pathParameters.employeeId;
@@ -209,6 +214,38 @@ module.exports.employeeExperience = async function (event) {
             message: error.message
           })
         }
+      }
+    }
+
+  //Soft Delete Record
+    async function softDeleteEmployeeExperience(event){
+      try{
+        const employeeId = event.pathParameters.employeeId;
+        const params = {
+          TableName: process.env.EMPLOYEE_TABLE,
+          Key: {
+            EmpId: employeeId,
+          },
+          UpdateExpression: 'SET IsActive = : isActive',
+          ExpressionAttributeValues:{
+            'isActive': true,
+          },
+        };
+        await dynamoDb.update(params).promise();
+        return{
+          statusCode: 200,
+          body: JSON.stringify({
+            message: 'Record soft deleted Successfully...!'
+          }),
+        };
+
+      }catch(error){
+        return{
+          statusCode: 500,
+          body: JSON.stringify({
+            message: 'Internal Server Error...!'
+          }),
+        };
       }
     }
 };
