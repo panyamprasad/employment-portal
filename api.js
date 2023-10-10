@@ -227,7 +227,7 @@ module.exports.employeeExperience = async function (event) {
           Key: {
             EmpId: employeeId,
           },
-          UpdateExpression: 'SET IsActive = : isActive',
+          UpdateExpression: 'SET IsActive = :isActive',
           ExpressionAttributeValues:{
             ':isActive': requestBody.IsActive,
           },
