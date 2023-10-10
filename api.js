@@ -78,41 +78,46 @@ module.exports.employeeExperience = async function (event) {
 
     //Update Record
     async function updateExperience(event){
-      console.log(event)
-        try{
-            const requestBody = JSON.parse(event.body);
-            const updateExpression = 'SET data = :data';
-            const expressionAttributeValues  = {
-                ':data' : requestBody
-            };
-            const expressionAttributeNames = {
-              '#data': 'data' // Handle attribute name substitution for reserved words
-            };
-            const params = {
-              TableName: process.env.EMPLOYEE_TABLE,
-              Key: {
-                EmpId: event.pathParameters.employeeId
-              },
-              UpdateExpression: updateExpression,
-              ExpressionAttributeValues: expressionAttributeValues,
-              ExpressionAttributeNames: expressionAttributeNames,
-              ReturnValues: 'UPDATED_NEW'
-            };
-            const result = await dynamoDb.update(params).promise();
-            return {
-              statusCode: 200,
-              body: JSON.stringify({
-                message: "Record Updated Successfully...!"
-              }),
-            };
-        }catch(error){
-          return{
-            statusCode: 500,
-            body: JSON.stringify({
-              message: 'Internal server error...!'
-            })
-          };
-        }
+      console.log(event);
+      
+      try {
+        const requestBody = JSON.parse(event.body);
+        
+        const updateExpression = 'SET #data = :data'; // Use the correct UpdateExpression syntax
+        const expressionAttributeValues = {
+          ':data': requestBody
+        };
+        const expressionAttributeNames = {
+          '#data': 'data' // Handle attribute name substitution for reserved words
+        };
+    
+        const params = {
+          TableName: process.env.EMPLOYEE_TABLE,
+          Key: {
+            EmpId: event.pathParameters.employeeId
+          },
+          UpdateExpression: updateExpression, // Correct the property name to UpdateExpression
+          ExpressionAttributeValues: expressionAttributeValues, // Use correct property name
+          ExpressionAttributeNames: expressionAttributeNames, // Include ExpressionAttributeNames
+          ReturnValues: 'UPDATED_NEW'
+        };
+    
+        const result = await dynamoDb.update(params).promise();
+        
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: "Record Updated Successfully...!"
+          }),
+        };
+      } catch (error) {
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            message: 'Internal server error...!'
+          })
+        };
+      }
     };
 
   //Get Record
