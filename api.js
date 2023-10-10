@@ -243,7 +243,7 @@ module.exports.employeeExperience = async function (event) {
         return{
           statusCode: 500,
           body: JSON.stringify({
-            message: 'Internal Server Error...!'
+            message: error.message
           }),
         };
       }
