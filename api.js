@@ -83,18 +83,18 @@ module.exports.employeeExperience = async function (event) {
       try {
         const requestBody = JSON.parse(event.body);
         
-        const updateExpression = 'SET #data = :data'; // Use the correct UpdateExpression syntax
+        const updateExpression = 'SET #data = :data';
         const expressionAttributeValues = {
           ':data': requestBody
         };
         const expressionAttributeNames = {
-          '#data': 'data' // Handle attribute name substitution for reserved words
+          '#data': 'data'
         };
     
         const params = {
           TableName: process.env.EMPLOYEE_TABLE,
           Key: {
-            EmpId: event.pathParameters.employeeId
+            EmpId: event.pathParameters.employeeId,
           },
           UpdateExpression: updateExpression, // Correct the property name to UpdateExpression
           ExpressionAttributeValues: expressionAttributeValues, // Use correct property name
