@@ -81,29 +81,28 @@ module.exports.employeeExperience = async function (event) {
       console.log(event);
       
       try {
+        const employeeId = event.pathParameters.employeeId;
         const requestBody = JSON.parse(event.body);
-        
-        const updateExpression = 'SET #data = :data';
-        const expressionAttributeValues = {
-          ':data': requestBody
-        };
-        const expressionAttributeNames = {
-          '#data': 'data'
-        };
-    
         const params = {
           TableName: process.env.EMPLOYEE_TABLE,
           Key: {
-            EmpId: event.pathParameters.employeeId,
+            EmpId: employeeId,
           },
-          UpdateExpression: updateExpression, // Correct the property name to UpdateExpression
-          ExpressionAttributeValues: expressionAttributeValues, // Use correct property name
-          ExpressionAttributeNames: expressionAttributeNames, // Include ExpressionAttributeNames
-          ReturnValues: 'UPDATED_NEW'
+          UpdateExpression:
+            'SET CompanyName = :companyName, CompanyLocation = :companyLocation, StartDate = :startDate, EndDate = :endDate, ' +
+            'PerformedRole = :performedRole, Responsibilities = :responsibilities, TechnologiesWorked = :technologiesWorked, IsActive = :isActive',
+          ExpressionAttributeValues: {
+            ':companyName': requestBody.CompanyName,
+            ':companyLocation': requestBody.CompanyLocation,
+            ':startDate': requestBody.StartDate,
+            ':endDate': requestBody.EndDate,
+            ':performedRole': requestBody.PerformedRole,
+            ':responsibilities': requestBody.Responsibilities,
+            ':technologiesWorked': requestBody.TechnologiesWorked,
+            ':isActive': requestBody.IsActive,
+          },
         };
-    
-        const result = await dynamoDb.update(params).promise();
-        
+        await dynamoDb.update(params).promise();
         return {
           statusCode: 200,
           body: JSON.stringify({
