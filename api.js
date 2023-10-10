@@ -78,6 +78,7 @@ module.exports.employeeExperience = async function (event) {
 
     //Update Record
     async function updateExperience(event){
+      console.log(event)
         try{
             const requestBody = JSON.parse(event.body);
             const updateExpression = 'SET data = :data';
