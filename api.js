@@ -95,11 +95,10 @@ module.exports.employeeExperience = async function (event) {
 
   //Update Record
   async function updateExperience(event) {
-    console.log(event)
-    console.log(event.body)
     try {
       const employeeId = event.pathParameters.employeeId;
       const requestBody = JSON.parse(event.body);
+      console.log(requestBody)
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
@@ -109,14 +108,14 @@ module.exports.employeeExperience = async function (event) {
           "SET CompanyName = :companyName, CompanyLocation = :companyLocation, StartDate = :startDate, EndDate = :endDate, " +
           "PerformedRole = :performedRole, Responsibilities = :responsibilities, TechnologiesWorked = :technologiesWorked, IsActive = :isActive",
         ExpressionAttributeValues: {
-          ":companyName": requestBody.CompanyName,
-          ":companyLocation": requestBody.CompanyLocation,
-          ":startDate": requestBody.StartDate,
-          ":endDate": requestBody.EndDate,
-          ":performedRole": requestBody.PerformedRole,
-          ":responsibilities": requestBody.Responsibilities,
-          ":technologiesWorked": requestBody.TechnologiesWorked,
-          ":isActive": requestBody.IsActive,
+          ":companyName": requestBody.Experience_Info.CompanyName,
+          ":companyLocation": requestBody.Experience_Info.CompanyLocation,
+          ":startDate": requestBody.Experience_Info.StartDate,
+          ":endDate": requestBody.Experience_Info.EndDate,
+          ":performedRole": requestBody.Experience_Info.PerformedRole,
+          ":responsibilities": requestBody.Experience_Info.Responsibilities,
+          ":technologiesWorked": requestBody.Experience_Info.TechnologiesWorked,
+          ":isActive": requestBody.Experience_Info.IsActive,
         },
       };
       await dynamoDb.update(params).promise();
