@@ -187,12 +187,13 @@ module.exports.employeeExperience = async function (event) {
   //Delete Record
     async function deleteEmployeeExperience(event){
       try{
+        const employeeId = event.pathParameters.employeeId;
         const params = {
           TableName: process.env.EMPLOYEE_TABLE,
           Key: {
-            EmpId: event.pathParameters.employeeId
+          EmpId: employeeId,
           },
-        };
+      };
         await dynamoDb.delete(params).promise();
         return{
           statusCode: 200,
