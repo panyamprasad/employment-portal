@@ -186,6 +186,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Delete Record
     async function deleteEmployeeExperience(event){
+      console.log(event)
       try{
         const employeeId = event.pathParameters.employeeId;
         const params = {
