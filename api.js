@@ -229,7 +229,7 @@ module.exports.employeeExperience = async function (event) {
           },
           UpdateExpression: 'SET IsActive = : isActive',
           ExpressionAttributeValues:{
-            'isActive': requestBody.IsActive,
+            ':isActive': requestBody.IsActive,
           },
         };
         await dynamoDb.update(params).promise();
