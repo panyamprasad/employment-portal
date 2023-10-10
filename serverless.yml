@@ -20,7 +20,7 @@ functions:
       - http:
           method: POST
           path: saveExperienceInfo
-          cors: trueonst
+          cors: true
       - http:
           method: PUT
           path: updateExperienceInfo/{employeeId}
@@ -33,6 +33,13 @@ functions:
           method: GET
           path: getAllEmployeesExperienceInfo
           cors: true
+      - http:
+          method: DELETE
+          path: deleteEmployeeExperienceInfo/{employeeId}
+          cors: true
+      - http:
+          method: PUT
+          path: softDeleteExperienceInfo/{employeeId}
 resources:
   Resources:
     EmployeeTable:

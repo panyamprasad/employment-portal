@@ -36,6 +36,15 @@ module.exports.employeeExperience = async function (event) {
         } else {
           return getAllEmployeesExperience(event);
         }
+      case "DELETE":
+        if (event.pathParameters && event.pathParameters.employeeId){
+          return deleteEmployeeExperience(event)
+        }else{
+          return{
+            statusCode: 400,
+            body: JSON.stringify({message: 'EmployeeId missing in delete request...!'})
+          }
+        }
       default:
         return {
           statusCode: 405,
@@ -173,5 +182,31 @@ module.exports.employeeExperience = async function (event) {
             body: JSON.stringify({ message: "Internal server error" }),
         };
         }
+    }
+
+  //Delete Record
+    async function deleteEmployeeExperience(event){
+      try{
+        const params = {
+          TableName: process.env.EMPLOYEE_TABLE,
+          Key: {
+            EmpId: event.pathParameters.employeeId
+          },
+        };
+        await dynamoDb.delete(params).promise();
+        return{
+          statusCode: 200,
+          body: JSON.stringify({
+            message: `${employeeId} Record deleted successfully...!`
+          }),
+        };
+      }catch(error){
+        return{
+          statusCode: 500,
+          body: JSON.stringify({
+            message: 'Internal Server Error...!'
+          })
+        }
+      }
     }
 };
