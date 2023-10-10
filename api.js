@@ -90,7 +90,7 @@ module.exports.employeeExperience = async function (event) {
         }
     };
 
-    //Update Record
+  //Update Record
     async function updateExperience(event){
       console.log(event);
       
@@ -219,6 +219,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Soft Delete Record
     async function softDeleteEmployeeExperience(event){
+      console.log(event)
       try{
         const employeeId = event.pathParameters.employeeId;
         const requestBody = JSON.parse(event.body);
@@ -239,7 +240,6 @@ module.exports.employeeExperience = async function (event) {
             message: 'Record soft deleted Successfully...!'
           }),
         };
-
       }catch(error){
         return{
           statusCode: 500,
