@@ -105,8 +105,10 @@ module.exports.employeeExperience = async function (event) {
           EmpId: employeeId,
         },
         UpdateExpression:
-          "SET CompanyName = :companyName, CompanyLocation = :companyLocation, StartDate = :startDate, EndDate = :endDate, " +
-          "PerformedRole = :performedRole, Responsibilities = :responsibilities, TechnologiesWorked = :technologiesWorked, IsActive = :isActive",
+          "SET Experience_Info.CompanyName = :companyName, Experience_Info.CompanyLocation = :companyLocation," +
+          "Experience_Info.StartDate = :startDate, Experience_Info.EndDate = :endDate, Experience_Info.PerformedRole = :performedRole," + 
+          "Experience_Info.Responsibilities = :responsibilities, Experience_Info.TechnologiesWorked = :technologiesWorked," + 
+          "Experience_Info.IsActive = :isActive",
         ExpressionAttributeValues: {
           ":companyName": requestBody.Experience_Info.CompanyName,
           ":companyLocation": requestBody.Experience_Info.CompanyLocation,
@@ -228,9 +230,9 @@ module.exports.employeeExperience = async function (event) {
         Key: {
           EmpId: employeeId,
         },
-        UpdateExpression: "SET IsActive = :isActive",
+        UpdateExpression: "SET Experience_Info.IsActive = :isActive",
         ExpressionAttributeValues: {
-          ":isActive": requestBody.IsActive,
+          ":isActive": requestBody.Experience_Info.IsActive,
         },
       };
       await dynamoDb.update(params).promise();
