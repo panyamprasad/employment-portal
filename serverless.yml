@@ -35,7 +35,7 @@ functions:
           cors: true
       - http:
           method: DELETE
-          path: deleteEmployeeExperienceInfo/{employeeId}
+          path: deleteExperienceInfo/{employeeId}
           cors: true
       - http:
           method: DELETE

@@ -38,9 +38,9 @@ module.exports.employeeExperience = async function (event) {
         }
       case "DELETE":
         if (event.pathParameters && event.pathParameters.employeeId){
-          if(event.queryParameters && event.queryParameters.hardDelete){
+          if(event.resource === '/deleteExperienceInfo/{employeeId}'){
             return hardDeleteEmployeeExperience(event)
-          }else{
+          }else if(event.resource === '/softDeleteExperienceInfo/{employeeId}'){
             return softDeleteEmployeeExperience(event)
           }
           
@@ -92,8 +92,6 @@ module.exports.employeeExperience = async function (event) {
 
   //Update Record
     async function updateExperience(event){
-      console.log(event);
-      
       try {
         const employeeId = event.pathParameters.employeeId;
         const requestBody = JSON.parse(event.body);
@@ -191,7 +189,6 @@ module.exports.employeeExperience = async function (event) {
 
   //Delete Record
     async function hardDeleteEmployeeExperience(event){
-      console.log(event)
       try{
         const employeeId = event.pathParameters.employeeId;
         const params = {
@@ -219,7 +216,6 @@ module.exports.employeeExperience = async function (event) {
 
   //Soft Delete Record
     async function softDeleteEmployeeExperience(event){
-      console.log(event)
       try{
         const employeeId = event.pathParameters.employeeId;
         const requestBody = JSON.parse(event.body);
