@@ -62,6 +62,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Save Record
   async function saveExperienceInfo(event) {
+    console.log(event)
     try {
       const requestBody = JSON.parse(event.body);
 
@@ -100,6 +101,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Update Record
   async function updateExperience(event) {
+    console.log(event)
     try {
       const employeeId = event.pathParameters.employeeId;
       const requestBody = JSON.parse(event.body);
@@ -143,6 +145,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Get Record
   async function getEmployeeExperience(event) {
+    console.log(event)
     try {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
@@ -175,6 +178,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Get All Records
   async function getAllEmployeesExperience(event) {
+    console.log(event)
     try {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
@@ -201,6 +205,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Delete Record
   async function hardDeleteEmployeeExperience(event) {
+    console.log(event)
     try {
       const employeeId = event.pathParameters.employeeId;
       const params = {
@@ -236,6 +241,7 @@ module.exports.employeeExperience = async function (event) {
 
   //Soft Delete Record
   async function softDeleteEmployeeExperience(event) {
+    console.log(event)
     try {
       const employeeId = event.pathParameters.employeeId;
       const requestBody = JSON.parse(event.body);
