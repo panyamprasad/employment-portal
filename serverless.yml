@@ -40,16 +40,6 @@ functions:
       - http:
           method: DELETE
           path: softDeleteExperienceInfo/{employeeId}
-    # iamRoleStatements:
-    #   - Effect: "Allow"
-    #     Action:
-    #       - "dynamodb:GetItem"
-    #       - "dynamodb:PutItem"
-    #       - "dynamodb:UpdateItem"
-    #       - "dynamodb:Scan"
-    #       - "dynamodb:DeleteItem"
-    #     Resource:
-    #       - !GetAtt EmployeeTable.Arn
 resources:
   Resources:
     EmployeeTable:
@@ -57,10 +47,10 @@ resources:
       Properties:
         TableName: ${self:custom.employeeTable}
         AttributeDefinitions:
-          - AttributeName: empId
+          - AttributeName: EmpId
             AttributeType: S
         KeySchema:
-          - AttributeName: empId
+          - AttributeName: EmpId
             KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 1
