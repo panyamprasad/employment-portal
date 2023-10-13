@@ -75,8 +75,12 @@ module.exports.employeeExperience = async function (event) {
       }
       // Validate the input data
       if (!requestBody || !requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
-        response.statusCode = 200;
-        throw new Error("Required fields (CompanyName, StartDate, EndDate) are mandatory...!");
+        return{
+          statusCode: 400,
+          body: JSON.stringify({
+            error: 'Required fields (CompanyName, StartDate, EndDate) are mandatory...!'
+          })
+        }
       }
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
