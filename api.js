@@ -66,7 +66,7 @@ module.exports.employeeExperience = async function (event) {
       const requestBody = JSON.parse(event.body);
 
       // Validate StartDate and EndDate
-      if (new Date(requestBody.StartDate) >= new Date(requestBody.EndDate)) {
+      if (new Date(requestBody.startDate) >= new Date(requestBody.endDate)) {
         return {
           statusCode: 400,
           body: JSON.stringify({ error: "EndDate must be after StartDate" }),
@@ -102,22 +102,22 @@ module.exports.employeeExperience = async function (event) {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
-          EmpId: employeeId,
+          empId: employeeId,
         },
         UpdateExpression:
-          "SET Experience_Info.CompanyName = :companyName, Experience_Info.CompanyLocation = :companyLocation," +
-          "Experience_Info.StartDate = :startDate, Experience_Info.EndDate = :endDate, Experience_Info.PerformedRole = :performedRole," + 
-          "Experience_Info.Responsibilities = :responsibilities, Experience_Info.TechnologiesWorked = :technologiesWorked," + 
-          "Experience_Info.IsActive = :isActive",
+          "SET Experience_Info.companyName = :companyName, Experience_Info.companyLocation = :companyLocation," +
+          "Experience_Info.startDate = :startDate, Experience_Info.endDate = :endDate, Experience_Info.performedRole = :performedRole," + 
+          "Experience_Info.responsibilities = :responsibilities, Experience_Info.technologiesWorked = :technologiesWorked," + 
+          "Experience_Info.isActive = :isActive",
         ExpressionAttributeValues: {
-          ":companyName": requestBody.Experience_Info.CompanyName,
-          ":companyLocation": requestBody.Experience_Info.CompanyLocation,
-          ":startDate": requestBody.Experience_Info.StartDate,
-          ":endDate": requestBody.Experience_Info.EndDate,
-          ":performedRole": requestBody.Experience_Info.PerformedRole,
-          ":responsibilities": requestBody.Experience_Info.Responsibilities,
-          ":technologiesWorked": requestBody.Experience_Info.TechnologiesWorked,
-          ":isActive": requestBody.Experience_Info.IsActive,
+          ":companyName": requestBody.Experience_Info.companyName,
+          ":companyLocation": requestBody.Experience_Info.companyLocation,
+          ":startDate": requestBody.Experience_Info.startDate,
+          ":endDate": requestBody.Experience_Info.endDate,
+          ":performedRole": requestBody.Experience_Info.performedRole,
+          ":responsibilities": requestBody.Experience_Info.responsibilities,
+          ":technologiesWorked": requestBody.Experience_Info.technologiesWorked,
+          ":isActive": requestBody.Experience_Info.isActive,
         },
       };
       await dynamoDb.update(params).promise();
@@ -143,7 +143,7 @@ module.exports.employeeExperience = async function (event) {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
-          EmpId: event.pathParameters.employeeId,
+          empId: event.pathParameters.employeeId,
         },
       };
       const result = await dynamoDb.get(params).promise();
@@ -200,10 +200,16 @@ module.exports.employeeExperience = async function (event) {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
-          EmpId: employeeId,
+          empId: employeeId,
         },
       };
-      await dynamoDb.delete(params).promise();
+      const result = await dynamoDb.delete(params).promise();
+      if(!result.Item){
+        return{
+          statusCode: 400,
+          body: JSON.stringify({ message: `${employeeId} record not found...!` }),
+        }
+      }
       return {
         statusCode: 200,
         body: JSON.stringify({
@@ -228,14 +234,22 @@ module.exports.employeeExperience = async function (event) {
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
-          EmpId: employeeId,
+          empId: employeeId,
         },
         UpdateExpression: "SET Experience_Info.IsActive = :isActive",
         ExpressionAttributeValues: {
-          ":isActive": requestBody.Experience_Info.IsActive,
+          ":isActive": requestBody.Experience_Info.isActive,
         },
       };
-      await dynamoDb.update(params).promise();
+      const result = await dynamoDb.update(params).promise();
+      if(!result.Item){
+        return{
+          statusCode: 400,
+          body: JSON.stringify({
+            message: `${employeeId} is not available...`
+          })
+        }
+      }
       return {
         statusCode: 200,
         body: JSON.stringify({
