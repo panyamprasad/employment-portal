@@ -72,6 +72,11 @@ module.exports.employeeExperience = async function (event) {
           body: JSON.stringify({ error: "EndDate must be after StartDate" }),
         };
       }
+      // Validate the input data
+      if (!requestBody || !requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
+        response.statusCode = 200;
+        throw new Error("Required fields (CompanyName, StartDate, EndDate) are mandatory...!");
+      }
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Item: requestBody,
@@ -98,7 +103,6 @@ module.exports.employeeExperience = async function (event) {
     try {
       const employeeId = event.pathParameters.employeeId;
       const requestBody = JSON.parse(event.body);
-      console.log(requestBody)
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Key: {
@@ -106,8 +110,8 @@ module.exports.employeeExperience = async function (event) {
         },
         UpdateExpression:
           "SET Experience_Info.companyName = :companyName, Experience_Info.companyLocation = :companyLocation," +
-          "Experience_Info.startDate = :startDate, Experience_Info.endDate = :endDate, Experience_Info.performedRole = :performedRole," + 
-          "Experience_Info.responsibilities = :responsibilities, Experience_Info.technologiesWorked = :technologiesWorked," + 
+          "Experience_Info.startDate = :startDate, Experience_Info.endDate = :endDate, Experience_Info.performedRole = :performedRole," +
+          "Experience_Info.responsibilities = :responsibilities, Experience_Info.technologiesWorked = :technologiesWorked," +
           "Experience_Info.isActive = :isActive",
         ExpressionAttributeValues: {
           ":companyName": requestBody.Experience_Info.companyName,
@@ -150,7 +154,9 @@ module.exports.employeeExperience = async function (event) {
       if (!result.Item) {
         return {
           statusCode: 400,
-          body: JSON.stringify({ message: "Record not found...!" }),
+          body: JSON.stringify({
+            message: `${employeeId} record not found...!`,
+          }),
         };
       }
       return {
@@ -204,11 +210,13 @@ module.exports.employeeExperience = async function (event) {
         },
       };
       const result = await dynamoDb.delete(params).promise();
-      if(!result.Item){
-        return{
+      if (!result.Item) {
+        return {
           statusCode: 400,
-          body: JSON.stringify({ message: `${employeeId} record not found...!` }),
-        }
+          body: JSON.stringify({
+            message: `${employeeId} record not found...!`,
+          }),
+        };
       }
       return {
         statusCode: 200,
@@ -242,13 +250,13 @@ module.exports.employeeExperience = async function (event) {
         },
       };
       const result = await dynamoDb.update(params).promise();
-      if(!result.Item){
-        return{
+      if (!result.Item) {
+        return {
           statusCode: 400,
           body: JSON.stringify({
-            message: `${employeeId} is not available...`
-          })
-        }
+            message: `${employeeId} is not available...`,
+          }),
+        };
       }
       return {
         statusCode: 200,
