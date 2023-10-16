@@ -74,7 +74,7 @@ module.exports.employeeExperience = async function (event) {
         };
       }
       // Validate the input data
-      if (!requestBody || !requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
+      if (!requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
         return{
           statusCode: 400,
           body: JSON.stringify({
