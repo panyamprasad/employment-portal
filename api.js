@@ -74,14 +74,14 @@ module.exports.employeeExperience = async function (event) {
         };
       }
       // Validate the input data
-      if (!requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
-        return{
-          statusCode: 400,
-          body: JSON.stringify({
-            error: 'Required fields (CompanyName, StartDate, EndDate) are mandatory...!'
-          })
-        }
-      }
+      // if (!requestBody.companyName || !requestBody.startDate || !requestBody.endDate) {
+      //   return{
+      //     statusCode: 400,
+      //     body: JSON.stringify({
+      //       error: 'Required fields (CompanyName, StartDate, EndDate) are mandatory...!'
+      //     })
+      //   }
+      // }
       const params = {
         TableName: process.env.EMPLOYEE_TABLE,
         Item: requestBody,
