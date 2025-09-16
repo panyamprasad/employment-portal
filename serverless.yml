@@ -132,11 +132,11 @@ resources:
         GroupName: EMPLOYEE
         UserPoolId: !Ref CognitoUserPool
     
-    Outputs:
-      UserPoolId:
-        Value: !Ref CognitoUserPool
-        Export:
-          Name: ${self:service}-user-pool-id
+Outputs:
+  UserPoolId:
+    Value: !Ref CognitoUserPool
+    Export:
+      Name: ${self:service}-user-pool-id
 
 
 
