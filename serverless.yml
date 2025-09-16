@@ -30,7 +30,7 @@ functions:
           path: /
           method: post
   getEmployees:
-    handler: src/employee/getEmployees.getEmployees
+    handler: src/employee/getEmployees.getEmployeesList
     events:
       - httpApi:
           path: /employees
