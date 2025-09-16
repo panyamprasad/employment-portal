@@ -1,45 +1,36 @@
-name: Deploy to AWS
-
+name: Deploy DynamoDB LAMBDA CRUD API
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
 on:
   push:
-    branches:
-      - main
-
+    branches: [main]
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  # This workflow contains a single job called "deploy"
   deploy:
+    name: deploy
+    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Use Node.js 20
+        uses: actions/setup-node@v1
         with:
           node-version: '20'
-
-      - name: Install Serverless Framework
-        run: npm install -g serverless
-
-      # 👇 This step is critical
-      - name: Force npm to public registry
-        run: |
-          npm config delete registry || true
-          npm config set registry https://registry.npmjs.org/
-          npm config list
-      
-      - name: Debug npm registry source
-        run: |
-          npm config list
-          cat ~/.npmrc || echo "No user .npmrc"
-          cat /etc/npmrc || echo "No system .npmrc"
-
       - name: Install dependencies
-        run: npm install
-
-      - name: Deploy to AWS
+        run: yarn install
+      - name: serverless deploy
+        uses: serverless/github-action@master
+        with:
+          args: deploy
         env:
+          # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+          # or if using AWS creds directly
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-        run: sls deploy --stage dev
