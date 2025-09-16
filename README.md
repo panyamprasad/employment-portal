@@ -67,3 +67,40 @@ This will start a local emulator of AWS Lambda and tunnel your requests to and f
 Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
 
 When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
+
+# Phase 1 — Deploy & test
+
+1. Install Serverless Framework (if not already):
+   ```bash
+   npm install -g serverless
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Make sure your AWS credentials are configured (AWS CLI `aws configure` or env vars).
+
+4. Deploy:
+   ```bash
+   npx serverless deploy -v
+   ```
+
+   After deploy the stack will print endpoints. Note the POST endpoint for `/admin/create-user`.
+
+5. Example test (replace `<ENDPOINT>` with the deployed URL):
+   ```bash
+   curl -X POST '<ENDPOINT>/admin/create-user' \
+     -H 'Content-Type: application/json' \
+     -d '{"email":"jane.doe@example.com","name":"Jane Doe","role":"EMPLOYEE"}'
+   ```
+
+6. The response contains `{ userId, email, role, temporaryPassword }`. For Phase 1 we return the generated password in the response to simplify onboarding; in production deliver it securely (email with verification, or a dedicated invitation flow).
+
+
+### Notes / Next steps (Phase 2 candidates)
+- Add a login endpoint using `AdminInitiateAuth` (or use Cognito Hosted UI / Amplify).
+- Implement JWT validation middleware (Lambda authorizer) and map Cognito group claim to `role`.
+- Implement `updatePersonalInfo` that only allows a user to update their own record.
+- Add proper email invitations and password reset flows.

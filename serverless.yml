@@ -3,11 +3,32 @@ service: employment-portal
 frameworkVersion: '3'
 
 provider:
-  name: aws
-  runtime: nodejs20.x
+  name: aws     # Cloud Provider
+  runtime: nodejs20.x     # Lambda Runtime  
+  region: ${opt:region, 'us-east-1'}      # default AWS region (can be overridden with --region)
+  stage: ${opt:stage, 'dev'}      # deployment stage (dev/prod/etc.)
+  httpApi:
+    cors: true      # <7> create an API Gateway HTTP API and enable CORS
+
+  environment:
+    DYNAMODB_EMPLOYEE_TABLE: employeeDetails
+    USERS_TABLE: ${self:service}-users-${sls:stage}  # <8> env var available inside Lambdas (DynamoDB table name)
+    USER_POOL_ID: !Ref CognitoUserPool               # <9> env var populated from CloudFormation Cognito resource
   iam:
     role:
       statements:
+        - Effect: 'Allow'
+          Action:
+            - cognito-idp:AdminCreateUser     # <11a> allow server to create Cognito users
+            - cognito-idp:AdminAddUserToGroup # <11b> allow adding users to Cognito groups
+            - cognito-idp:AdminSetUserPassword# <11c> allow setting user passwords (Admin flow)
+          Resource: !GetAtt CognitoUserPool.Arn # <12> restrict those cognito actions to the created UserPool
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem    # <13a> allow writing items (e.g., store user record)
+            - dynamodb:GetItem    # <13b> allow reading items
+            - dynamodb:UpdateItem # <13c> allow updating items
+          Resource: !GetAtt UsersTable.Arn     # <14> restrict DynamoDB actions to the created table
         - Effect: 'Allow'
           Action:
             - 'dynamodb:PutItem'
@@ -16,13 +37,20 @@ provider:
             - 'dynamodb:UpdateItem'
             - 'dynamodb:DeleteItem'
           Resource: arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/employeeDetails
-  environment:
-    DYNAMODB_EMPLOYEE_TABLE: employeeDetails
+  
   # Uncomment to easily set up a custom domain. Read the docs for more details:
   # https://www.serverless.com/framework/docs/providers/aws/guide/domains
   # domain: api.example.com
+package:
+  individually: true
 
 functions:
+  adminCreateUser:
+    handler: src/functions/adminCreateUser.handler
+    events:
+      - httpApi:
+          path: /admin/create-user
+          method: post
   createEmployee:
     handler: src/employee/createEmployee.createEmployee
     events:
@@ -48,4 +76,67 @@ resources:
           - AttributeName: primary_key
             KeyType: HASH
         TableName: employeeDetails
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.USERS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    # -----------------------------------------------------
+    # Why you need it:
+    # This is the core identity store.
+    # All authentication (login, password reset, user groups, etc.) will work on top of this user pool.
+    # CognitoUserPool
+    CognitoUserPool: # This creates your Cognito User Pool — a secure user directory where all your HR and employee user accounts will be stored.
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: ${self:service}-user-pool-${sls:stage}
+        AutoVerifiedAttributes: # email → Cognito automatically verifies emails.
+          - email
+        UsernameAttributes: # email → users log in using their email.
+          - email
+        Schema: # defines which attributes are stored (like name, email) and whether they can be edited.
+          - Name: name
+            AttributeDataType: String
+            Mutable: true
+          - Name: email
+            AttributeDataType: String
+            Mutable: true
+    # -----------------------------------------------------
+    # CognitoUserPoolClient
+    # Why you need it:
+    # Without a User Pool Client, applications (or your Lambda functions) can’t initiate sign-ins or get tokens from Cognito.
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: ${self:service}-client-${sls:stage}
+        UserPoolId: !Ref CognitoUserPool
+        GenerateSecret: false
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+
+    HRGroup:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: HR
+        UserPoolId: !Ref CognitoUserPool
+
+    EmployeeGroup:
+      Type: AWS::Cognito::UserPoolGroup
+      Properties:
+        GroupName: EMPLOYEE
+        UserPoolId: !Ref CognitoUserPool
+    
+    Outputs:
+      UserPoolId:
+        Value: !Ref CognitoUserPool
+        Export:
+          Name: ${self:service}-user-pool-id
+
+
 
