@@ -16,9 +16,9 @@ export const getEmployeesList = async() => {
             }
         }
 
-        const emplyeeData = result.Items.map(({ primary_key, email}) => ({
-            name: primary_key, 
-            email,
+        const emplyeeData = result.Items.map(item => ({
+            name: item.primary_key, 
+            email: item.email,
         }))
         return{
             statusCode: 200,
