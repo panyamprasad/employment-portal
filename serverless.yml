@@ -12,7 +12,7 @@ provider:
 
   environment:
     DYNAMODB_EMPLOYEE_TABLE: employeeDetails
-    USERS_TABLE: ${self:service}-users-${sls:stage}  # <8> env var available inside Lambdas (DynamoDB table name)
+    USERS_TABLE: users-${sls:stage}  # <8> env var available inside Lambdas (DynamoDB table name)
     USER_POOL_ID: !Ref CognitoUserPool               # <9> env var populated from CloudFormation Cognito resource
   iam:
     role:
