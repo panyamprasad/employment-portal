@@ -23,12 +23,18 @@ provider:
   # domain: api.example.com
 
 functions:
-  createCustomer:
+  createEmployee:
     handler: src/employee/createEmployee.createEmployee
     events:
       - httpApi:
           path: /
           method: post
+  getEmployees:
+    handler: src/employee/getEmployees.getEmployees
+    events:
+      - httpApi:
+          path: /employees
+          method: get
 resources:
   Resources:
     EmployeeTable:

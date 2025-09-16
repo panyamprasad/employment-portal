@@ -3,22 +3,33 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 export const createEmployee = async (event) => {
   // Decode base64 body if coming from API Gateway
-  const body = JSON.parse(Buffer.from(event.body, "base64").toString());
+  try{
+    const body = JSON.parse(Buffer.from(event.body, "base64").toString());
 
-  const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
-  const putParams = {
-    TableName: process.env.DYNAMODB_EMPLOYEE_TABLE,
-    Item: {
-      primary_key: body.name,
-      email: body.email,
-    },
-  };
+    const putParams = {
+      TableName: process.env.DYNAMODB_EMPLOYEE_TABLE,
+      Item: {
+        primary_key: body.name,
+        email: body.email,
+      },
+    };
 
-  await ddb.send(new PutCommand(putParams));
+    await ddb.send(new PutCommand(putParams));
 
-  return {
-    statusCode: 201,
-    body: JSON.stringify({ message: "Customer created successfully" }),
-  };
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ message: "Employee created successfully" }),
+    };
+  }catch(error){
+    console.error('Error add the employee:', error);
+     return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Failed to add the employee',
+        error: error.message,
+      }),
+    }
+  }
 };
