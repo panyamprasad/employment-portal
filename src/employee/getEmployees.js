@@ -15,10 +15,10 @@ export const getEmployeesList = async() => {
                 body: JSON.stringify({ message: 'No Employees found'}),
             }
         }
-
-        const emplyeeData = result.Items.map(item => ({
-            name: item.primary_key, 
-            email: item.email,
+        const items = result.Items ?? []
+        const emplyeeData = items.map(({ primary_key, email}) => ({
+            name: primary_key, 
+            email,
         }))
         return{
             statusCode: 200,
