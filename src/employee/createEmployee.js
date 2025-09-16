@@ -4,7 +4,7 @@ import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 export const createEmployee = async (event) => {
   // Decode base64 body if coming from API Gateway
   try{
-    const body = JSON.parse(Buffer.from(event.body, "base64").toString());
+    const body = event.isBase64Encoded ? JSON.parse(Buffer.from(event.body, "base64").toString()): JSON.parse(event.body);
 
     const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 
