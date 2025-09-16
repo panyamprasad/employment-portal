@@ -7,6 +7,7 @@ export const getEmployeesList = async() => {
         const result = await data.send( new ScanCommand({
             TableName: process.env.DYNAMODB_EMPLOYEE_TABLE,
         }))
+        console.log('Result : ', result);
 
         if (!result.Count || result.Count === 0){
             return{
@@ -27,11 +28,11 @@ export const getEmployeesList = async() => {
             })
         }
     }catch(error){
-        console.error('Error fetching customers:', error)
+        console.error('Error fetching employees:', error)
         return {
         statusCode: 500,
             body: JSON.stringify({
-                message: 'Failed to fetch customers',
+                message: 'Failed to fetch employees',
                 error: error.message,
             }),
         }
