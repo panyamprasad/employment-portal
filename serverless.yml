@@ -21,7 +21,7 @@ provider:
           Action:
             - cognito-idp:AdminCreateUser     # <11a> allow server to create Cognito users
             - cognito-idp:AdminAddUserToGroup # <11b> allow adding users to Cognito groups
-            - cognito-idp:AdminSetUserPassword# <11c> allow setting user passwords (Admin flow)
+            - cognito-idp:AdminSetUserPassword # <11c> allow setting user passwords (Admin flow)
           Resource: !GetAtt CognitoUserPool.Arn # <12> restrict those cognito actions to the created UserPool
         - Effect: Allow
           Action:
