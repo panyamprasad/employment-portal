@@ -75,6 +75,11 @@ export const handler = async (event) => {
   }
 };
 
+const response = (statusCode, message) => ({
+  statusCode,
+  body: JSON.stringify({ message })
+});
+
 async function userExistsInCognito(userPoolId, email) {
   try{
       await cognitoClient.send(new AdminGetUserCommand({
