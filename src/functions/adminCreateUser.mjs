@@ -37,7 +37,7 @@ export const handler = async (event) => {
     }
     
     // 1) Create the user in Cognito (suppress automatic invitation email)
-    const tempPass = temporaryPassword || generateSecurePassword();
+    const tempPass = generateSecurePassword();
     createdUsername = await createCognitoUser(userPoolId, email, tempPass, name);
 
     // 2) Set the password to permanent so the user can login
