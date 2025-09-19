@@ -121,7 +121,7 @@ resources:
         GenerateSecret: false
         ExplicitAuthFlows:
           - ADMIN_NO_SRP_AUTH
-
+  # It will create the groups HR & EMPLOYEE
     HRGroup:
       Type: AWS::Cognito::UserPoolGroup
       Properties:
