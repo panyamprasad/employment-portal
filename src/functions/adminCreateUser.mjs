@@ -2,12 +2,17 @@ import { CognitoIdentityProviderClient, AdminGetUserCommand, AdminCreateUserComm
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from 'crypto';
+import { requireRole } from '../middleware/auth.js';
 
 const cognitoClient = new CognitoIdentityProviderClient({});
 const ddbClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(ddbClient);
 
 export const handler = async (event) => {
+  // ✅ Check if caller is HR
+  const authResult = await requireRole(['HR'])(event);
+  if (authResult) return authResult;
+  
   const body = event.body ? JSON.parse(event.body) : {};
   const { email, name, role } = body;
 
