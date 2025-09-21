@@ -34,17 +34,18 @@ export const verifyToken = async (authHeader) => {
 
 export const requireRole = (allowedRoles = []) => {
   return async (event) => {
-    try {
-      const claims = await verifyToken(event.headers.Authorization);
+    try { 
+        console.log("Auth header:", event.headers.Authorization || event.headers.authorization);
+        const claims = await verifyToken(event.headers?.Authorization || event.headers?.authorization);
+        console.log('Decode claims : ', claims); 
+        const groups = claims['cognito:groups'] || [];
+        const userRole = Array.isArray(groups) ? groups[0] : groups; // HR or EMPLOYEE
 
-      const groups = claims['cognito:groups'] || [];
-      const userRole = Array.isArray(groups) ? groups[0] : groups; // HR or EMPLOYEE
-
-      if (!allowedRoles.includes(userRole)) {
-        return {
-          statusCode: 403,
-          body: JSON.stringify({ message: 'Forbidden' }),
-        };
+        if (!allowedRoles.includes(userRole)) {
+            return {
+            statusCode: 403,
+            body: JSON.stringify({ message: 'Forbidden' }),
+            };
       }
 
       // Attach user info for downstream logic
