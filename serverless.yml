@@ -48,11 +48,17 @@ package:
 
 functions:
   adminCreateUser:
-    handler: src/functions/adminCreateUser.handler
+    handler: src/admin/createUser.handler
     events:
       - httpApi:
           path: /admin/create-user
           method: post
+  updateUser:
+    handler: src/admin/updateUser.handler
+    events:
+      - httpApi:
+          path: /admin/users/{userId}
+          method: put
   createEmployee:
     handler: src/employee/createEmployee.createEmployee
     events:
