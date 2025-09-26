@@ -66,3 +66,22 @@ export const requireRole = (allowedRoles = []) => {
     }
   };
 };
+
+export const getUserIdFromEvent = async (event) => {
+  const jwtToken = event.headers?.authorization || event.headers.Authorization;
+  if(!jwtToken){
+    return{
+      error: {
+        statusCode: 401,
+        body: JSON.stringify({
+          message: 'Misssing Token'
+        })
+      }
+    }
+  };
+  const token = jwtToken.replace("Bearer ", "");
+  const claims = await verifyToken(token);
+  return {
+    userId: claims.sub, claims
+  };
+};

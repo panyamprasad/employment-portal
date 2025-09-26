@@ -59,18 +59,18 @@ functions:
       - httpApi:
           path: /admin/users/{userId}
           method: put
-  createEmployee:
-    handler: src/employee/createEmployee.createEmployee
+  getEmployeeProfile:
+    handler: src/employee/getProfile.handler
     events:
       - httpApi:
-          path: /
-          method: post
-  getEmployees:
-    handler: src/employee/getEmployees.getEmployeesList
-    events:
-      - httpApi:
-          path: /employees
+          path: /employee/profile
           method: get
+  updateEmployeeProfile:
+    handler: src/employee/updateEmployee.handler
+    events:
+      - httpApi:
+          path: /employee/profile
+          method: put
 resources:
   Resources:
     EmployeeTable:
