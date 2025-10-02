@@ -10,8 +10,8 @@ const ddb = DynamoDBDocumentClient.from(ddbClient);
 
 export const handler = async (event) => {
   // ✅ Check if caller is HR
-  // const authResult = await requireRole(['HR'])(event);
-  // if (authResult) return authResult;
+  const authResult = await requireRole(['HR'])(event);
+  if (authResult) return authResult;
 
   const body = event.body ? JSON.parse(event.body) : {};
   const { email, name, role } = body;
