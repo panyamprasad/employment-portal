@@ -3,6 +3,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from 'crypto';
 import { requireRole } from '../middleware/auth.js';
+import { validateBody } from "../middleware/validateBody.js";
 
 const cognitoClient = new CognitoIdentityProviderClient({});
 const ddbClient = new DynamoDBClient({});
@@ -13,7 +14,8 @@ export const handler = async (event) => {
   const authResult = await requireRole(['HR'])(event);
   if (authResult) return authResult;
 
-  const body = event.body ? JSON.parse(event.body) : {};
+  const isValid = validateBody(event.body, ['email', 'name', 'role']);
+  if(!isValid) return error;
   const { email, name, role } = body;
 
   if (!email || !name || !role) {
@@ -164,3 +166,20 @@ async function safeDeleteCognitoUser(userPoolId, username) {
     console.error('Failed to rollback user from Cognito', delErr);
   }
 }
+
+
+// Employee Password:
+// {
+//     "userId": "7438e478-9001-700c-926e-a24905d7f589",
+//     "email": "panyam.prasad2@gmail.com",
+//     "name": "PanyamGoud",
+//     "role": "Employee",
+//     "temporaryPassword": "CtXkq_l#0g>l"
+// },
+// {
+//     "userId": "b4181498-7091-70cb-98a2-1dc5f69d3a3f",
+//     "email": "panyam.manjusha28@gmail.com",
+//     "name": "ManjushaDega",
+//     "role": "Employee",
+//     "temporaryPassword": "KKs6)OZc]&3)"
+// }
