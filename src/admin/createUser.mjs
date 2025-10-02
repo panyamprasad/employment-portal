@@ -18,12 +18,6 @@ export const handler = async (event) => {
   if(!isValid) return error;
   const { email, name, role } = event.body;
 
-  if (!email || !name || !role) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields: email, name, role' })
-    };
-  }
   const userPoolId = process.env.USER_POOL_ID;
   const usersTable = process.env.USERS_TABLE;
 
