@@ -16,7 +16,7 @@ export const handler = async (event) => {
 
   const isValid = validateBody(event.body, ['email', 'name', 'role']);
   if(!isValid) return error;
-  const { email, name, role } = body;
+  const { email, name, role } = event.body;
 
   if (!email || !name || !role) {
     return {
