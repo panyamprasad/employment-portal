@@ -3,30 +3,35 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from 'crypto';
 import { requireRole } from '../middleware/auth.js';
-// import { validateBody } from "../middleware/validateBody.js";
+import { validateBody } from "../middleware/validateBody.js";
 
 const cognitoClient = new CognitoIdentityProviderClient({});
 const ddbClient = new DynamoDBClient({});
 const ddb = DynamoDBDocumentClient.from(ddbClient);
 
 export const handler = async (event) => {
+  // Input validation uisng the middleware
+  console.log('adminCreateUser event', event);
+  const body = event.body ? JSON.parse(event.body) : {};
+  const isValid = validateBody(event.body, ['email', 'name', 'role']);
+  if(!isValid) return error;
+  const { email, name, role } = body;
+
   // ✅ Check if caller is HR
   const authResult = await requireRole(['HR'])(event);
   if (authResult) return authResult;
 
-  // const isValid = validateBody(event.body, ['email', 'name', 'role']);
-  // if(!isValid) return error;
-  // const { email, name, role } = event.body;
+  
 
-  const body = event.body ? JSON.parse(event.body) : {};
-  const { email, name, role } = body;
+  // const body = event.body ? JSON.parse(event.body) : {};
+  // const { email, name, role } = body;
 
-  if (!email || !name || !role) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: 'Missing required fields: email, name, role' })
-    };
-  }
+  // if (!email || !name || !role) {
+  //   return {
+  //     statusCode: 400,
+  //     body: JSON.stringify({ message: 'Missing required fields: email, name, role' })
+  //   };
+  // }
 
   const userPoolId = process.env.USER_POOL_ID;
   const usersTable = process.env.USERS_TABLE;
@@ -186,4 +191,11 @@ async function safeDeleteCognitoUser(userPoolId, username) {
 //     "name": "ManjushaDega",
 //     "role": "Employee",
 //     "temporaryPassword": "KKs6)OZc]&3)"
+// }
+// {
+//     "userId": "b4088488-0061-70da-69b2-01aa3e36a957",
+//     "email": "prasad.mca75@gmail.com",
+//     "name": "HelloBudhu",
+//     "role": "Employee",
+//     "temporaryPassword": "$Kn7LLc?1m+*"
 // }
