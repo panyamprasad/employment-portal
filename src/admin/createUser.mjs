@@ -3,7 +3,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import crypto from 'crypto';
 import { requireRole } from '../middleware/auth.js';
-import { validateBody } from "../middleware/validateBody.js";
+// import { validateBody } from "../middleware/validateBody.js";
 
 const cognitoClient = new CognitoIdentityProviderClient({});
 const ddbClient = new DynamoDBClient({});
@@ -14,9 +14,19 @@ export const handler = async (event) => {
   const authResult = await requireRole(['HR'])(event);
   if (authResult) return authResult;
 
-  const isValid = validateBody(event.body, ['email', 'name', 'role']);
-  if(!isValid) return error;
-  const { email, name, role } = event.body;
+  // const isValid = validateBody(event.body, ['email', 'name', 'role']);
+  // if(!isValid) return error;
+  // const { email, name, role } = event.body;
+
+  const body = event.body ? JSON.parse(event.body) : {};
+  const { email, name, role } = body;
+
+  if (!email || !name || !role) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ message: 'Missing required fields: email, name, role' })
+    };
+  }
 
   const userPoolId = process.env.USER_POOL_ID;
   const usersTable = process.env.USERS_TABLE;
